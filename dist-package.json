@@ -1,0 +1,15 @@
+{
+  "name": "beat-kelly",
+  "version": "0.1.0",
+  "description": "Can you beat kelly?",
+  "author": "Demircan Celebi <demircancelebi@gmail.com>",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm install express"
+  },
+  "dependencies": {
+    "connect-history-api-fallback": "1.3.0",
+    "express": "4.15.4",
+    "serve-static": "1.12.4"
+  }
+}
