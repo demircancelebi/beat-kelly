@@ -25,6 +25,7 @@
         <input type="number" @enter.prevent="nextRound" v-model="riskedAmount">
         <button>Submit!</button>
       </form>
+      <p style="margin-top: 200px;">Created by <a target="_blank" href="https://twitter.com/burakyngn/">@burakyngn</a> and <a target="_blank" href="https://twitter.com/demircancelebi/">@demircancelebi</a></p>
     </div>
   </div>
 </template>
@@ -88,3 +89,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style>
+  a {
+    color: rgb(27, 96, 224);
+  }
+</style>
