@@ -2,7 +2,7 @@
   <div class="home">
     <h1 class="text-3xl leading-9 font-extrabold text-gray-900 tracking-tight sm:text-4xl
      sm:leading-10 md:text-5xl md:leading-14">
-     Can you beat Kelly <span @click.prevent="details = !details">?</span></h1>
+     Can you beat Kelly<span @click.prevent="details = !details">?</span></h1>
     <div v-if="!gameStarted">
       <p>
         Interactive game at this website is designed to teach you optimal bet sizing.
@@ -28,9 +28,6 @@
     <div v-if="gameStarted">
       <h5>Your current stack: <strong>{{ stack }}</strong> units</h5>
       <h5>Kelly stack: <strong>{{ kellyStack }}</strong> units</h5>
-      <div v-if="gameOver">
-        Game over.
-      </div>
       <div v-if="showHints && round > 1" class="hints">
         <h6 style="margin: 0 0 10px;">Last Round: {{lastRound.pctChanceToWin }}% win probability,
         {{ lastRound.multiplier }}x multiplier, {{ lastRound.stack }} your stack,
@@ -63,9 +60,51 @@
           </form>
         </div>
       </div>
-      <pre><code>
-        roundHistory: {{ roundHistory }}
-      </code></pre>
+      <div id="results"></div>
+      <div v-if="gameOver">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Expected Value</th>
+              <th style="min-width: 50px">Win %</th>
+              <th>Multiplier</th>
+              <th>Your stack</th>
+              <th>You risked</th>
+              <th>Kelly stack</th>
+              <th>Kelly risked</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(round, i) in roundHistory" v-bind:key="i">
+              <td>{{ round.expectedValue.toFixed(3) }}</td>
+              <td>{{ round.pctChanceToWin }}%</td>
+              <td>{{ round.multiplier }}</td>
+              <td>{{ round.stack }}</td>
+              <td>{{ round.riskedAmount }}</td>
+              <td>{{ round.kellyStack }}</td>
+              <td>{{ round.kellyRisked }}</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td><strong>Final stacks</strong></td>
+              <td></td>
+              <td></td>
+              <td>{{ stack }}</td>
+              <td></td>
+              <td>{{ kellyStack }}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <p style="margin-top: 200px;">Created by <a target="_blank" href="https://twitter.com/burakyngn/">@burakyngn</a> and <a target="_blank" href="https://twitter.com/demircancelebi/">@demircancelebi</a> <br><br>Inspired by the game at <a target="_blank" href="https://bestbet.data36.com/">data36.com</a></p>
   </div>
@@ -74,6 +113,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import gaussian from 'gaussian';
+
+declare global {
+  interface Window {
+    Plotly: any;
+  }
+}
 
 type RoundStats = {
   expectedValue: number;
@@ -152,8 +197,6 @@ export default defineComponent({
           this.stack -= riskedAmount;
           this.kellyStack -= kellyRisked;
         }
-        console.log(this.stack);
-        console.log(this.kellyStack);
       }
 
       this.riskedAmount = '';
@@ -161,7 +204,32 @@ export default defineComponent({
       this.pctChanceToWin = 5 + Math.floor(Math.random() * 90);
       this.round += 1;
       if (this.round > this.roundLimit) {
-        this.gameOver = true;
+        this.onGameOver();
+      }
+    },
+    onGameOver() {
+      this.gameOver = true;
+      const stack = {
+        x: this.roundHistory.map((r, i) => i),
+        y: this.roundHistory.map(((r) => r.stack)),
+        type: 'scatter',
+        name: 'Your performance',
+      };
+
+      const kellyStack = {
+        x: this.roundHistory.map((r, i) => i),
+        y: this.roundHistory.map(((r) => r.kellyStack)),
+        type: 'scatter',
+        name: 'Kelly performance',
+      };
+
+      const data = [stack, kellyStack];
+      const layout = {
+        title: 'Your performance against Kelly',
+      };
+
+      if (window.Plotly) {
+        window.Plotly.newPlot('results', data, layout);
       }
     },
   },
@@ -177,7 +245,7 @@ export default defineComponent({
       stack: 10000,
       kellyStack: 10000,
       round: 0,
-      roundLimit: 5,
+      roundLimit: 50,
       pctChanceToWin: 0.5,
     };
   },
@@ -206,5 +274,21 @@ export default defineComponent({
   .round {
     border: 1px solid rgba(27, 96, 224, 0.9);
     padding: 10px;
+  }
+  .table {
+    text-align: left;
+  }
+  table {
+    border-collapse: collapse;
+  }
+
+  tr {
+    margin: 0;
+    padding: 0;
+  }
+  th, td {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    margin: 0;
   }
 </style>
