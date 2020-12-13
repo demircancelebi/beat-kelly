@@ -14,11 +14,11 @@
       </blockquote>
 
       <form action="" style="margin-top: 20px;">
-        <label for="hints">
+        <!-- <label for="hints">
           <input id="hints" type="checkbox" v-model="showHints">
           Show last round's optimal action during the game
         </label>
-        <br>
+        <br> -->
         <button @click.prevent="gameStarted = true" style="margin-top: 10px;">
           Start the game
         </button>
@@ -27,7 +27,6 @@
 
     <div v-if="gameStarted">
       <h5>Your current stack: <strong>{{ stack }}</strong> units</h5>
-      <h5>Kelly stack: <strong>{{ kellyStack }}</strong> units</h5>
       <div v-if="showHints && round > 1" class="hints">
         <h6 style="margin: 0 0 10px;">Last Round: {{lastRound.pctChanceToWin }}% win probability,
         {{ lastRound.multiplier }}x multiplier, {{ lastRound.stack }} your stack,
@@ -244,7 +243,7 @@ export default defineComponent({
   data() {
     return {
       roundHistory: [] as Array<RoundStats>,
-      showHints: true,
+      showHints: false,
       gameStarted: false,
       details: false,
       riskedAmount: '0',
