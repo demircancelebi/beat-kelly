@@ -37,7 +37,7 @@
       </div>
       <div v-if="!gameOver">
         <div class="round">
-          <h3 style="margin: 0 0 10px;">Round #{{ round }}</h3>
+          <h3 style="margin: 0 0 10px;">Round #{{ round }} of {{ roundLimit }}</h3>
           <div v-if="details">
             <h5>evRandom (0.05-0.95): <input type="text" v-model="evRandom"></h5>
             <h5>expectedValue: <input type="text" v-model="expectedValue"></h5>
@@ -65,22 +65,26 @@
         <table class="table">
           <thead>
             <tr>
+              <th>Round #</th>
               <th>Expected Value</th>
               <th style="min-width: 50px">Win %</th>
               <th>Multiplier</th>
               <th>Your stack</th>
               <th>You risked</th>
+              <th style="min-width: 100px">Kelly bet for your stack</th>
               <th>Kelly stack</th>
               <th>Kelly risked</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(round, i) in roundHistory" v-bind:key="i">
+              <td>{{ i + 1 }}</td>
               <td>{{ round.expectedValue.toFixed(3) }}</td>
               <td>{{ round.pctChanceToWin }}%</td>
               <td>{{ round.multiplier }}</td>
               <td>{{ round.stack }}</td>
               <td>{{ round.riskedAmount }}</td>
+              <td>{{ (round.stack * (round.kellyRisked / round.kellyStack)).toFixed(0) }}</td>
               <td>{{ round.kellyStack }}</td>
               <td>{{ round.kellyRisked }}</td>
             </tr>
@@ -92,12 +96,16 @@
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
             </tr>
             <tr>
+              <td></td>
               <td><strong>Final stacks</strong></td>
               <td></td>
               <td></td>
               <td>{{ stack }}</td>
+              <td></td>
               <td></td>
               <td>{{ kellyStack }}</td>
               <td></td>
@@ -143,7 +151,7 @@ export default defineComponent({
       return Math.max(1, Math.floor(this.expectedValue / (this.pctChanceToWin / 1000)) / 10);
     },
     expectedValue(): number {
-      const evDistribution = gaussian(0.95, 0.1);
+      const evDistribution = gaussian(1.05, 0.1);
       return evDistribution.ppf(this.evRandom);
     },
     actualExpectedValue(): number {
@@ -210,15 +218,15 @@ export default defineComponent({
     onGameOver() {
       this.gameOver = true;
       const stack = {
-        x: this.roundHistory.map((r, i) => i),
-        y: this.roundHistory.map(((r) => r.stack)),
+        x: [...this.roundHistory.map((r, i) => (i + 1)), this.roundLimit + 1],
+        y: [...this.roundHistory.map(((r) => r.stack)), this.stack],
         type: 'scatter',
         name: 'Your performance',
       };
 
       const kellyStack = {
-        x: this.roundHistory.map((r, i) => i),
-        y: this.roundHistory.map(((r) => r.kellyStack)),
+        x: [...this.roundHistory.map((r, i) => (i + 1)), this.roundLimit + 1],
+        y: [...this.roundHistory.map(((r) => r.kellyStack)), this.kellyStack],
         type: 'scatter',
         name: 'Kelly performance',
       };
@@ -255,7 +263,7 @@ export default defineComponent({
 <style>
   .home {
     margin: 0 auto;
-    max-width: 600px;
+    max-width: 700px;
   }
   blockquote {
     background: #eee;
