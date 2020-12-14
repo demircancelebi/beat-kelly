@@ -19,6 +19,16 @@
           Show last round's optimal action during the game
         </label>
         <br> -->
+        <h5 style="margin-bottom: 0;">Example question</h5>
+        <img src="../assets/ss.png" alt="Screenshot" style="max-width: 550px;">
+        <h5 style="margin-bottom: 0;">Rules</h5>
+        <ul>
+          <li>You start with 10000 units in your stack and will be asked 50 questions.</li>
+          <li>You (and Kelly) can only choose how much you can risk at each round.</li>
+          <li>The outcomes of the events are the same for you and Kelly.</li>
+          <li>Try to have more units in your stack than Kelly at the end of 50 rounds.</li>
+        </ul>
+        <br>
         <button @click.prevent="gameStarted = true" style="margin-top: 10px;">
           Start the game
         </button>
