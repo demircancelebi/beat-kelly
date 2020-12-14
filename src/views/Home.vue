@@ -1,8 +1,10 @@
 <template>
   <div class="home">
-    <h1 class="text-3xl leading-9 font-extrabold text-gray-900 tracking-tight sm:text-4xl
-     sm:leading-10 md:text-5xl md:leading-14">
-     Can you beat Kelly<span @click.prevent="details = !details">?</span></h1>
+    <h1>
+     <a href="/" class="text-decoration-none hover-blue-border">
+      Can you beat Kelly<span @click.prevent="details = !details">?</span>
+    </a>
+   </h1>
     <div v-if="!gameStarted">
       <p>
         Interactive game at this website is designed to teach you optimal bet sizing.
@@ -36,7 +38,16 @@
     </div>
 
     <div v-if="gameStarted">
-      <h5>Your current stack: <strong>{{ stack }}</strong> units</h5>
+      <div v-if="lastRound && lastRound.stack">
+        <h4 style="margin: 0" class="text-success"
+          v-if="stack >= lastRound.stack">Yay, you won!</h4>
+        <h4 style="margin: 0" class="text-danger"
+          v-if="stack < lastRound.stack">No, you lost!</h4>
+        <h4 style="margin: 5px 0">
+          Last round stack: <strong>{{ lastRound.stack }}</strong> units</h4>
+      </div>
+      <h2 style="margin: 10px 0">
+        Your current stack: <strong class="text-success">{{ stack }}</strong> units</h2>
       <div v-if="showHints && round > 1" class="hints">
         <h6 style="margin: 0 0 10px;">Last Round: {{lastRound.pctChanceToWin }}% win probability,
         {{ lastRound.multiplier }}x multiplier, {{ lastRound.stack }} your stack,
@@ -56,16 +67,17 @@
             <h5>simpleMultiplier: {{ simpleMultiplier }}</h5>
             <h5>actualExpectedValue: {{ actualExpectedValue }}</h5>
           </div>
-          <h5 style="margin-bottom: 0;">The deal:</h5>
-          <h4 style="margin-top: 5px; font-weight: normal;">
+          <h4 style="margin-bottom: 0;">The deal:</h4>
+          <h2 style="margin-top: 5px; font-weight: normal;">
             You have a <strong>{{ pctChanceToWin }}%</strong> probability to
-            <strong>{{ simpleMultiplier }}x</strong> your bet --
-            and a <strong>{{ 100 - pctChanceToWin }}%</strong> probability to lose it all.</h4>
-          <h4 style="font-weight: normal; margin-bottom: 10px;">How much will you risk?
-            <small>Anything from 0 to <strong>{{ stack }}</strong></small></h4>
-          <form action="#" @submit.prevent="nextRound">
-            <input type="number" @enter.prevent="nextRound" v-model="riskedAmount">
-            <button>Submit!</button>
+            <strong>{{ simpleMultiplier }}x</strong> your bet <br><small>--
+            and a {{ 100 - pctChanceToWin }}% probability to lose it all.</small></h2>
+          <h2 style="font-weight: normal; margin-bottom: 10px;">How much will you risk?
+            <small>(Anything from <strong>0 to {{ stack }}</strong>)</small></h2>
+          <form style="margin-top: 20px; font-size: 22px" action="#" @submit.prevent="nextRound">
+            <input style="font-size: 22px" type="number" @enter.prevent="nextRound"
+            v-model="riskedAmount">
+            <button style="font-size: 22px" @click.prevent="nextRound">Submit!</button>
           </form>
         </div>
       </div>
@@ -76,11 +88,10 @@
             <tr>
               <th>Round #</th>
               <th>Expected Value</th>
-              <th style="min-width: 50px">Win %</th>
+              <th style="min-width: 50px">Win % probability</th>
               <th>Multiplier</th>
               <th>Your stack</th>
               <th>You risked</th>
-              <th style="min-width: 100px">Kelly bet for your stack</th>
               <th>Kelly stack</th>
               <th>Kelly risked</th>
             </tr>
@@ -90,15 +101,13 @@
               <td>{{ i + 1 }}</td>
               <td>{{ round.expectedValue.toFixed(3) }}</td>
               <td>{{ round.pctChanceToWin }}%</td>
-              <td>{{ round.multiplier }}</td>
+              <td>{{ round.multiplier }}x</td>
               <td>{{ round.stack }}</td>
               <td>{{ round.riskedAmount }}</td>
-              <td>{{ (round.stack * (round.kellyRisked / round.kellyStack)).toFixed(0) }}</td>
               <td>{{ round.kellyStack }}</td>
               <td>{{ round.kellyRisked }}</td>
             </tr>
             <tr>
-              <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
@@ -115,7 +124,6 @@
               <td></td>
               <td>{{ stack }}</td>
               <td></td>
-              <td></td>
               <td>{{ kellyStack }}</td>
               <td></td>
             </tr>
@@ -123,7 +131,7 @@
         </table>
       </div>
     </div>
-    <p style="margin-top: 200px;">Created by <a target="_blank" href="https://twitter.com/burakyngn/">@burakyngn</a> and <a target="_blank" href="https://twitter.com/demircancelebi/">@demircancelebi</a> <br><br>Inspired by the game at <a target="_blank" href="https://bestbet.data36.com/">data36.com</a></p>
+    <p style="margin-top: 100px;">Created by <a target="_blank" href="https://twitter.com/burakyngn/">@burakyngn</a> and <a target="_blank" href="https://twitter.com/demircancelebi/">@demircancelebi</a> <br><br>Inspired by the game at <a target="_blank" href="https://bestbet.data36.com/">data36.com</a></p>
   </div>
 </template>
 
@@ -307,5 +315,18 @@ export default defineComponent({
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 10px;
     margin: 0;
+  }
+  .text-success {
+    color: rgb(0, 177, 62);
+  }
+  .text-danger {
+    color: rgb(177, 0, 62);
+  }
+  .text-decoration-none {
+    text-decoration: none;
+  }
+  .hover-blue-border:hover {
+    text-decoration: underline;
+    text-decoration-skip-ink: auto;
   }
 </style>
