@@ -38,16 +38,28 @@
     </div>
 
     <div v-if="gameStarted">
-      <div v-if="lastRound && lastRound.stack">
+      <h4 style="margin: 0" class="text-danger" v-if="noNegative">
+        YOU CAN'T RISK NEGATIVE MONEY, YO!
+      </h4>
+      <div v-if="!gameOver && lastRound && lastRound.stack">
         <h4 style="margin: 0" class="text-success"
-          v-if="stack >= lastRound.stack">Yay, you won!</h4>
+          v-if="lastRound.roundWon && lastRound.stack !== stack">
+          Yay, you won!</h4>
         <h4 style="margin: 0" class="text-danger"
-          v-if="stack < lastRound.stack">No, you lost!</h4>
-        <h4 style="margin: 5px 0" class="ins-4">
-          Last round stack: <strong>{{ lastRound.stack }}</strong> units</h4>
+          v-if="!lastRound.roundWon && lastRound.stack !== stack">
+          Whoops, you lost!</h4>
+        <h4 style="margin: 0" class="ins-6 text-success"
+          v-if="lastRound.roundWon && lastRound.stack === stack">
+        You would've won, but you didn't risk anything.</h4>
+        <h4 style="margin: 0" class="ins-6 text-danger"
+          v-if="!lastRound.roundWon && lastRound.stack === stack">
+        You would've lost, but you didn't risk anything!</h4>
+        <h5 style="margin: 5px 0" class="ins-4">
+          Last round stack: <strong>{{ lastRound.stack }}</strong> units</h5>
+        <h2 style="margin: 10px 0">
+          <span>Your current stack: </span>
+          <strong class="text-success">{{ stack }}</strong> units</h2>
       </div>
-      <h2 style="margin: 10px 0">
-        Your current stack: <strong class="text-success">{{ stack }}</strong> units</h2>
       <div v-if="showHints && round > 1" class="hints">
         <h6 style="margin: 0 0 10px;">Last Round: {{lastRound.pctChanceToWin }}% win probability,
         {{ lastRound.multiplier }}x multiplier, {{ lastRound.stack }} your stack,
@@ -82,9 +94,31 @@
           </form>
         </div>
       </div>
+      <div v-if="gameOver">
+        <h1>{{ result.text }}</h1>
+        <div class="w50p float-left">
+          <h4 style="margin: 10px 0">
+          <span>Your final stack: </span>
+          <strong class="text-success">{{ stack }}</strong> units</h4>
+          <h3>Your rank is <br>
+            <span class="text-success">#31</span> amongst 5000 players</h3>
+        </div>
+        <div class="w50p float-left">
+          <h4 style="margin: 10px 0" v-if="gameOver">
+          <span>Kelly's final stack: </span>
+          <strong class="text-success">{{ kellyStack }}</strong> units</h4>
+          <h3>Your Kelly's rank is <br>
+            <span class="text-success">#1</span> amongst 5000 Kelly players</h3>
+        </div>
+        <div class="clearfix"></div>
+        <blockquote>Your rank against other players alone is not very meaningful since
+          questions are random and you may have seen odds against your favor. <br>
+          More meaningful thing to consider is your rank
+        amongst all players vs your opponent Kelly's rank amongst all Kelly players.</blockquote>
+      </div>
       <div id="results"></div>
       <div v-if="gameOver">
-        <table class="table">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th>Round #</th>
@@ -95,6 +129,7 @@
               <th>You risked</th>
               <th>Kelly stack</th>
               <th>Kelly risked</th>
+              <th>Round won</th>
             </tr>
           </thead>
           <tbody>
@@ -107,8 +142,16 @@
               <td>{{ round.riskedAmount }}</td>
               <td>{{ round.kellyStack }}</td>
               <td>{{ round.kellyRisked }}</td>
+              <td v-bind:class="{
+                'bg-success': round.roundWon,
+                'bg-danger': !round.roundWon
+              }">
+                <span v-if="round.roundWon">yes</span>
+                <span v-if="!round.roundWon">no</span>
+              </td>
             </tr>
             <tr>
+              <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
@@ -126,6 +169,7 @@
               <td>{{ stack }}</td>
               <td></td>
               <td>{{ kellyStack }}</td>
+              <td></td>
               <td></td>
             </tr>
           </tbody>
@@ -154,6 +198,7 @@ type RoundStats = {
   kellyStack: number;
   riskedAmount: number;
   kellyRisked: number;
+  roundWon: boolean;
 }
 
 export default defineComponent({
@@ -201,28 +246,40 @@ export default defineComponent({
         return;
       }
 
+      if (riskedAmount < 0) {
+        this.noNegative = true;
+        return;
+      }
+
+      this.noNegative = false;
+
       if (this.round > 0) {
         const kellyRisked = Number.parseInt((this.kellySize * this.kellyStack).toFixed(), 10);
-
-        this.roundHistory.push({
-          expectedValue: this.actualExpectedValue,
-          pctChanceToWin: this.pctChanceToWin,
-          multiplier: this.simpleMultiplier,
-          stack: this.stack,
-          kellyStack: this.kellyStack,
-          riskedAmount,
-          kellyRisked,
-        });
+        const stackBefore = this.stack;
+        const kellyStackBefore = this.kellyStack;
 
         if (Math.random() * 100 < this.pctChanceToWin) { // won
+          this.roundWon = true;
           this.stack = this.stack - riskedAmount + (riskedAmount * this.simpleMultiplier);
           this.stack = Number.parseInt(this.stack.toFixed(), 10);
           this.kellyStack = this.kellyStack - kellyRisked + (kellyRisked * this.simpleMultiplier);
           this.kellyStack = Number.parseInt(this.kellyStack.toFixed(), 10);
         } else {
+          this.roundWon = false;
           this.stack -= riskedAmount;
           this.kellyStack -= kellyRisked;
         }
+
+        this.roundHistory.push({
+          expectedValue: this.actualExpectedValue,
+          pctChanceToWin: this.pctChanceToWin,
+          multiplier: this.simpleMultiplier,
+          stack: stackBefore,
+          kellyStack: kellyStackBefore,
+          roundWon: this.roundWon,
+          riskedAmount,
+          kellyRisked,
+        });
       }
 
       this.riskedAmount = '';
@@ -236,14 +293,14 @@ export default defineComponent({
     onGameOver() {
       this.gameOver = true;
       const stack = {
-        x: [...this.roundHistory.map((r, i) => (i + 1)), this.roundLimit + 1],
+        x: [...this.roundHistory.map((r, i) => i), this.roundLimit],
         y: [...this.roundHistory.map(((r) => r.stack)), this.stack],
         type: 'scatter',
         name: 'Your performance',
       };
 
       const kellyStack = {
-        x: [...this.roundHistory.map((r, i) => (i + 1)), this.roundLimit + 1],
+        x: [...this.roundHistory.map((r, i) => i), this.roundLimit],
         y: [...this.roundHistory.map(((r) => r.kellyStack)), this.kellyStack],
         type: 'scatter',
         name: 'Kelly performance',
@@ -252,6 +309,19 @@ export default defineComponent({
       const data = [stack, kellyStack];
       const layout = {
         title: 'Your performance against Kelly',
+      };
+
+      let text = 'You perform as well as Kelly!';
+      if (this.stack > this.kellyStack) {
+        text = 'You beat Kelly!';
+      } else if (this.stack < this.kellyStack) {
+        text = 'Kelly beat you!';
+      }
+
+      this.result = {
+        text,
+        stack,
+        kellyStack,
       };
 
       if (window.Plotly) {
@@ -265,14 +335,17 @@ export default defineComponent({
       showHints: false,
       gameStarted: false,
       details: false,
+      noNegative: false,
       riskedAmount: '0',
       evRandom: 0,
       gameOver: false,
       stack: 10000,
       kellyStack: 10000,
       round: 0,
-      roundLimit: 50,
+      roundLimit: 5,
+      roundWon: false,
       pctChanceToWin: 0.5,
+      result: {},
     };
   },
 });
@@ -313,9 +386,18 @@ export default defineComponent({
     padding: 0;
   }
   th, td {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 10px;
     margin: 0;
+  }
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.05);
+  }
+  .bg-success {
+    background: rgb(226, 243, 230);
+  }
+  .bg-danger {
+    background: rgb(249, 220, 223);
   }
   .text-success {
     color: rgb(0, 177, 62);
@@ -335,5 +417,22 @@ export default defineComponent({
   }
   .ins-4 {
     opacity: .4;
+  }
+  .ins-6 {
+    opacity: .6;
+  }
+  .w50p {
+    width: 50%;
+  }
+  .float-left {
+    float: left;
+  }
+  .text-left {
+    text-align: left;
+  }
+  .clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
   }
 </style>
