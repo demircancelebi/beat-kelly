@@ -43,7 +43,7 @@
           v-if="stack >= lastRound.stack">Yay, you won!</h4>
         <h4 style="margin: 0" class="text-danger"
           v-if="stack < lastRound.stack">No, you lost!</h4>
-        <h4 style="margin: 5px 0">
+        <h4 style="margin: 5px 0" class="ins-4">
           Last round stack: <strong>{{ lastRound.stack }}</strong> units</h4>
       </div>
       <h2 style="margin: 10px 0">
@@ -57,7 +57,7 @@
       </div>
       <div v-if="!gameOver">
         <div class="round">
-          <h3 style="margin: 0 0 10px;">Round #{{ round }} of {{ roundLimit }}</h3>
+          <h3 style="margin: 0 0 10px;" class="ins-4">Round #{{ round }} of {{ roundLimit }}</h3>
           <div v-if="details">
             <h5>evRandom (0.05-0.95): <input type="text" v-model="evRandom"></h5>
             <h5>expectedValue: <input type="text" v-model="expectedValue"></h5>
@@ -70,8 +70,9 @@
           <h4 style="margin-bottom: 0;">The deal:</h4>
           <h2 style="margin-top: 5px; font-weight: normal;">
             You have a <strong>{{ pctChanceToWin }}%</strong> probability to
-            <strong>{{ simpleMultiplier }}x</strong> your bet <br><small>--
-            and a {{ 100 - pctChanceToWin }}% probability to lose it all.</small></h2>
+            <strong>{{ simpleMultiplier }}x</strong> your bet <br><small class="ins">--
+            and a <strong>{{ 100 - pctChanceToWin }}%</strong> probability to lose it all.
+          </small></h2>
           <h2 style="font-weight: normal; margin-bottom: 10px;">How much will you risk?
             <small>(Anything from <strong>0 to {{ stack }}</strong>)</small></h2>
           <form style="margin-top: 20px; font-size: 22px" action="#" @submit.prevent="nextRound">
@@ -328,5 +329,11 @@ export default defineComponent({
   .hover-blue-border:hover {
     text-decoration: underline;
     text-decoration-skip-ink: auto;
+  }
+  .ins-3 {
+    opacity: .3;
+  }
+  .ins-4 {
+    opacity: .4;
   }
 </style>
