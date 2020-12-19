@@ -187,6 +187,7 @@ import gaussian from 'gaussian';
 declare global {
   interface Window {
     Plotly: any;
+    firebase: any;
   }
 }
 
@@ -204,6 +205,7 @@ type RoundStats = {
 export default defineComponent({
   name: 'Home',
   created() {
+    this.helloWorld();
     this.nextRound();
   },
   computed: {
@@ -236,6 +238,19 @@ export default defineComponent({
     },
   },
   methods: {
+    helloWorld() {
+      const helloWorld = window.firebase.functions().httpsCallable('helloWorld');
+
+      helloWorld({ demir: 'can' })
+        .then((res: any) => {
+          console.log('res');
+          console.log(res);
+        })
+        .catch((err: any) => {
+          console.log('err');
+          console.log(err);
+        });
+    },
     nextRound() {
       if (this.riskedAmount === '') {
         return;
