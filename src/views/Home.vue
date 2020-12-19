@@ -107,7 +107,7 @@
           <h4 style="margin: 10px 0" v-if="gameOver">
           <span>Kelly's final stack: </span>
           <strong class="text-success">{{ kellyStack }}</strong> units</h4>
-          <h3>Your Kelly's rank is <br>
+          <h3>Your opponent Kelly's rank is <br>
             <span class="text-success">#1</span> amongst 5000 Kelly players</h3>
         </div>
         <div class="clearfix"></div>
