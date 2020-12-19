@@ -1,5 +1,11 @@
 import { createStore } from 'vuex';
 
+declare global {
+  interface Window {
+    firebase: any;
+  }
+}
+
 const firebaseConfig = {
   apiKey: 'AIzaSyB86PePJJKrO7fBNvQe8mIibs2_zBF14yo',
   authDomain: 'beat-kelly.firebaseapp.com',
