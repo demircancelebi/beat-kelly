@@ -56,10 +56,10 @@
         You would've lost, but you didn't risk anything!</h4>
         <h5 style="margin: 5px 0" class="ins-4">
           Last round stack: <strong>{{ lastRound.stack }}</strong> units</h5>
-        <h2 style="margin: 10px 0">
-          <span>Your current stack: </span>
-          <strong class="text-success">{{ stack }}</strong> units</h2>
       </div>
+      <h2 style="margin: 10px 0">
+        <span>Your current stack: </span>
+        <strong class="text-success">{{ stack }}</strong> units</h2>
       <div v-if="showHints && round > 1" class="hints">
         <h6 style="margin: 0 0 10px;">Last Round: {{lastRound.pctChanceToWin }}% win probability,
         {{ lastRound.multiplier }}x multiplier, {{ lastRound.stack }} your stack,
@@ -239,17 +239,20 @@ export default defineComponent({
   },
   methods: {
     helloWorld() {
-      const helloWorld = window.firebase.functions().httpsCallable('helloWorld');
+      fetch('https://192.168.1.102:5001/beat-kelly/us-central1/addMessage?text=selam')
+        .then((response) => response.json())
+        .then((data) => console.log(data));
+      // const helloWorldCall = window.firebase.functions().httpsCallable('helloWorld');
 
-      helloWorld({ demir: 'can' })
-        .then((res: any) => {
-          console.log('res');
-          console.log(res);
-        })
-        .catch((err: any) => {
-          console.log('err');
-          console.log(err);
-        });
+      // helloWorldCall({ demir: 'can' })
+      //   .then((res: any) => {
+      //     console.log('res');
+      //     console.log(res);
+      //   })
+      //   .catch((err: any) => {
+      //     console.log('err');
+      //     console.log(err);
+      //   });
     },
     nextRound() {
       if (this.riskedAmount === '') {

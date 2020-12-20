@@ -19,7 +19,7 @@ const firebaseConfig = {
 // Initialize Firebase
 window.firebase.initializeApp(firebaseConfig);
 window.firebase.analytics();
-// window.firebase.functions().useFunctionsEmulator('http://192.168.1.102:5000'); // Or whatever the port is for your local emulator
+window.firebase.functions().useFunctionsEmulator('http://192.168.1.102:5001'); // Or whatever the port is for your local emulator
 
 export default createStore({
   state: {
