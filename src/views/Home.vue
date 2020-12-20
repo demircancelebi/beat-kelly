@@ -239,7 +239,7 @@ export default defineComponent({
   },
   methods: {
     helloWorld() {
-      fetch('https://192.168.1.102:5001/beat-kelly/us-central1/addMessage?text=selam')
+      fetch('https://us-central1-beat-kelly.cloudfunctions.net/addMessage?text=selam')
         .then((response) => response.json())
         .then((data) => console.log(data));
       // const helloWorldCall = window.firebase.functions().httpsCallable('helloWorld');

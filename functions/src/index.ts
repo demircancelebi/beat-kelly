@@ -13,10 +13,10 @@ export const helloWorld = functions.https.onRequest((request, response) => {
 export const addMessage = functions.https.onRequest(async (req, res) => {
   // Grab the text parameter.
   const original = req.query.text;
-  // Push the new message into Cloud Firestore using the Firebase Admin SDK.
-  const writeResult = await admin.firestore().collection('messages').add({ original });
+
+  const writeResult = await admin.database().ref('messages').set(original);
   // Send back a message that we've successfully written the message
-  res.json({ result: `Message with ID: ${writeResult.id} added.` });
+  res.json({ result: writeResult });
 });
 
 export const helloWorldCall = functions.https.onCall((data, ctx) => {
