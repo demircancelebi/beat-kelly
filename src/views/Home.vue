@@ -430,7 +430,7 @@ export default defineComponent({
       stack: 10000,
       kellyStack: 10000,
       round: 0,
-      roundLimit: 5,
+      roundLimit: 50,
       roundWon: false,
       pctChanceToWin: 0.5,
       resultText: '',
