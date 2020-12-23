@@ -7,7 +7,7 @@
     </h1>
     <div v-if="!gameStarted">
       <p>
-        Interactive game at this website is designed to teach you optimal bet sizing.
+        Interactive game here is designed to teach you optimal bet sizing.
       </p>
       <blockquote>In probability theory <strong>the Kelly criterion</strong> is
         a formula for bet sizing that leads almost surely to <strong>higher wealth</strong>
@@ -21,7 +21,7 @@
         </label>
         <br> -->
         <h4 class="text-blue" style="margin-bottom: 0;">Example question</h4>
-        <img :src="ss" alt="Screenshot">
+        <img :src="ss" alt="Example question">
         <h4 class="text-blue" style="margin-bottom: 0;">Rules</h4>
         <ul>
           <li>You start with 10000 units in your stack and will be asked
@@ -35,6 +35,23 @@
         <button @click.prevent="gameStarted = true" style="margin-top: 10px; font-size: 1.2em">
           Start the game
         </button>
+        <h4 class="text-blue" style="margin: 40px 0 0;">From players</h4>
+        <blockquote class="w100p m-a twitter-tweet"><p lang="en" dir="ltr">
+          absolutely love this <a href="https://t.co/Bb96tqvjbU">https://t.co/Bb96tqvjbU</a>
+          <a href="https://t.co/RnhGiBtASn">pic.twitter.com/RnhGiBtASn</a></p>&mdash;
+          𝗔𝘁𝗮𝗸𝗮𝗻 (@atakanyz) <a href="https://twitter.com/atakanyz/status/1341519251895709697?ref_src=twsrc%5Etfw">
+          December 22, 2020</a></blockquote>
+        <blockquote class="w100p m-a twitter-tweet"><p lang="en" dir="ltr">Cool.<br>
+          <br>Where can I learn more about Kelly criterion? Is it it useful for trading?
+          <a href="https://t.co/f6rCuBnCaQ">pic.twitter.com/f6rCuBnCaQ</a></p>&mdash;
+          Moiz Rafay (@MoizRafay2)
+          <a href="https://twitter.com/MoizRafay2/status/1341522886138486785?ref_src=twsrc%5Etfw">
+          December 22, 2020</a></blockquote>
+        <blockquote class="w100p m-a twitter-tweet"><p lang="en" dir="ltr">
+          Ha! This is really nice! Thanks!<br><br>I got lucky on my 3rd try :)
+          <a href="https://t.co/O1d9gC0QNT">pic.twitter.com/O1d9gC0QNT</a></p>&mdash;
+          Cristian Strat (@cgst) <a href="https://twitter.com/cgst/status/1341532961800245248?ref_src=twsrc%5Etfw">
+          December 22, 2020</a></blockquote>
       </form>
     </div>
 
@@ -209,7 +226,7 @@
         </table>
       </div>
     </div>
-    <p style="margin-top: 100px;">Created by <a target="_blank" href="https://twitter.com/burakyngn/">@burakyngn</a> and <a target="_blank" href="https://twitter.com/demircancelebi/">@demircancelebi</a> <br><br>Inspired by the game at <a target="_blank" href="https://bestbet.data36.com/">data36.com</a></p>
+    <p style="margin-top: 100px;">Created by <a target="_blank" href="https://twitter.com/burakyngn/">@burakyngn</a> and <a target="_blank" href="https://twitter.com/demircancelebi/">@demircancelebi</a> <br><br>Inspired by the game at <a target="_blank" href="https://bestbet.data36.com/">bestbet.data36.com</a></p>
   </div>
 </template>
 
@@ -607,5 +624,4 @@ export default defineComponent({
       font-size: 16px;
     }
   }
-
 </style>
